@@ -3,17 +3,18 @@
 
 	import edu.princeton.cs.algs4.StdRandom;
 	import edu.princeton.cs.algs4.StdStats;
-	import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 	public class PercolationStats {
 		private double[] sample;
 		
 		// perform trials independent experiments on an n-by-n grid
 		public PercolationStats(int n, int trials) {
-			int i;
-			this.sample = new double[trials];
+	        if (n <= 0 || trials <= 0)
+	        	throw new IllegalArgumentException("Please enter values bigger than 0");
 			
-			for(i = 0; i < n; ++i) {
+	        this.sample = new double[n];
+			
+			for(int i = 0; i < trials; ++i) {
 				Percolation current = new Percolation(n);
 				
 				while(!current.percolates()) {

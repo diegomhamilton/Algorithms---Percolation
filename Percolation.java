@@ -1,72 +1,88 @@
 	/*
 	
 	*/
-
-	import edu.princeton.cs.algs4.StdRandom;
-	import edu.princeton.cs.algs4.StdStats;
+	
 	import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 	
 	public class Percolation {
 		private WeightedQuickUnionUF matrix, matrixAux;
 		private int top, bot, size, openSites = 0;
-		private boolean[] open;
+		private boolean[] state;
 		
 		// create n-by-n grid, with all sites blocked
 		public Percolation(int n) {
-			matrix = new WeightedQuickUnionUF(n*n+2);
-			matrixAux = new WeightedQuickUnionUF(n*n+1); //matrix but without bottom to be used on isFull
-			size = n;		   
-			open = new boolean[n*n];
-			top = n * n;				
-			bot = n * n + 1;
+			if(n <= 0){
+				throw new IllegalArgumentException("Insira um valor de n maior que 0");
+			}
+			
+			this.matrix = new WeightedQuickUnionUF(n*n+2);
+			this.matrixAux = new WeightedQuickUnionUF(n*n+1); //matrix but without bottom to be used on isFull
+			this.size = n;		   
+			this.state = new boolean[n*n];
+			this.top = n * n;				
+			this.bot = n * n + 1;
+		}
+		//converts (row, col) coordinate to linear coordinate
+		private int toLinear(int row, int col) {
+			return (row-1)*this.size + col - 1;
+		}
+		//check if the index is on the bounds
+		private void validates(int row, int col) {
+			if(row < 1 || row > this.size || col < 1 || col > this.size) {
+				throw new IndexOutOfBoundsException("Please enter a number in [1, " + this.size + "]");
+			}
 		}
 		// open site (row, col) if it is not open already
 		public void open(int row, int col) {
+			validates(row, col);
+			
 			if(!isOpen(row, col)) {
-				open[(row-1)*size + col - 1] = true;
-				
+				this.state[toLinear(row, col)] = true;
+				this.openSites++;
+			
 				if(row == 1) {
-					this.matrix.union((row-1)*size + col - 1, top);
-					this.matrixAux.union((row-1)*size + col - 1, top);
+					this.matrix.union(top, toLinear(row, col));
+					this.matrixAux.union(top, toLinear(row, col));
 				}
-				else if(row == size) {
-					this.matrix.union((row-1)*size + col - 1, bot);
+				if(row == size) {
+					this.matrix.union(bot,toLinear(row, col));
 				}
 				if(row > 1 && isOpen(row-1, col)) {
-					this.matrix.union((row-1)*size + col - 1, (row-2)*size + col - 1);
-					this.matrixAux.union((row-1)*size + col - 1, (row-2)*size + col - 1);
+					this.matrix.union(toLinear(row, col), toLinear(row-1, col));
+					this.matrixAux.union(toLinear(row, col), toLinear(row-1, col));
 				}
 				if(row < size && isOpen(row+1, col)) {
-					this.matrix.union((row-1)*size + col - 1, row*size + col - 1);
-					this.matrixAux.union((row-1)*size + col - 1, row*size + col - 1);
+					this.matrix.union(toLinear(row, col), toLinear(row+1, col));
+					this.matrixAux.union(toLinear(row, col), toLinear(row+1, col));
 				}
 				if(col > 1 && isOpen(row, col-1)) {
-					this.matrix.union((row-1)*size + col - 1, (row-1)*size + col - 2);
-					this.matrixAux.union((row-1)*size + col - 1, (row-1)*size + col - 2);
+					this.matrix.union(toLinear(row, col), toLinear(row, col-1));
+					this.matrixAux.union(toLinear(row, col), toLinear(row, col-1));
 				}
 				if(col < size && isOpen(row, col+1)) {
-					this.matrix.union((row-1)*size + col - 1, (row-1)*size + col);
-					this.matrixAux.union((row-1)*size + col - 1, (row-1)*size + col);
+					this.matrix.union(toLinear(row, col), toLinear(row, col+1));
+					this.matrixAux.union(toLinear(row, col), toLinear(row, col+1));
 				}
-				
-				openSites++;
 			}
-			
-			else { }
 		}
 		// return if site (row, col) is open
 		public boolean isOpen(int row, int col) {
-			return open[(row-1)*size + col - 1];
+			validates(row, col);
+			
+			return state[toLinear(row, col)];
 		}
 		// returns if site (row, col) is connected to top
 		public boolean isFull(int row, int col) {
-			return matrixAux.connected((row-1)*size + col - 1, top);
+			validates(row, col);
+			
+			return matrixAux.connected(toLinear(row, col), top);
 		}
 		// return the number of open sites
 		public int numberOfOpenSites() {			
 			return openSites;
 		}
-		public boolean percolates(){				// return if the system percolates (top is connected to bottom)
+		// return if the system percolates (top is connected to bottom)
+		public boolean percolates(){
 			return matrix.connected(top, bot);
 		}
 	}
