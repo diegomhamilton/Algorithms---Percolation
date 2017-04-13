@@ -12,13 +12,13 @@
 	        if (n <= 0 || trials <= 0)
 	        	throw new IllegalArgumentException("Please enter values bigger than 0");
 			
-	        this.sample = new double[n];
+	        this.sample = new double[trials];
 			
 			for(int i = 0; i < trials; ++i) {
 				Percolation current = new Percolation(n);
 				
 				while(!current.percolates()) {
-					current.open(StdRandom.uniform(1, n + 1), StdRandom.uniform(1, n + 1));
+					current.open(StdRandom.uniform(1, n+1), StdRandom.uniform(1, n+1));
 				}
 				this.sample[i] = (double) current.numberOfOpenSites()/(n * n);
 			}
@@ -31,7 +31,7 @@
 		
 		// sample standard deviation of percolation threshold
 		public double stddev() {
-			return StdStats.mean(this.sample);
+			return StdStats.stddev(this.sample);
 		}
 		
 		// low  endpoint of 95% confidence interval
