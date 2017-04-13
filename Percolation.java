@@ -1,5 +1,7 @@
 	/*
-	
+	First assignment of Algorithms Course by Princeton University
+	Percolation of a n-by-n grid
+	Diego Hamilton, 2017
 	*/
 	
 	import edu.princeton.cs.algs4.WeightedQuickUnionUF;

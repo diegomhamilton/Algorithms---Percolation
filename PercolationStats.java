@@ -1,5 +1,8 @@
 	/*
-	 */
+	First assignment of Algorithms Course by Princeton University
+	Calculates the percolation threshold via Monte Carlo simulation.
+	Diego Hamilton, 2017
+	*/
 
 	import edu.princeton.cs.algs4.StdRandom;
 	import edu.princeton.cs.algs4.StdStats;
